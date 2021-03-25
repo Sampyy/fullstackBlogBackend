@@ -1,0 +1,21 @@
+{
+  "name": "blogbackend",
+  "version": "1.0.0",
+  "description": "backend for full stack 4",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
+    "build:ui": "rm -rf build && cd ../Full-stack/osa4/blogfront && npm run build --prod && cp -r build ../../../fullStackOsa4Blogi"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "mongoose": "^5.11.19",
+    "nodemon": "^2.0.7"
+  }
+}
