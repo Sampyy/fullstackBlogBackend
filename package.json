@@ -7,7 +7,8 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "build:ui": "rm -rf build && cd ../Full-stack/osa4/blogfront && npm run build --prod && cp -r build ../../../fullStackOsa4Blogi"
+    "build:ui": "rm -rf build && cd ../Full-stack/osa4/blogfront && npm run build --prod && cp -r build ../../../fullStackOsa4Blogi",
+    "test": "jest --verbose"
   },
   "author": "",
   "license": "ISC",
@@ -18,5 +19,11 @@
     "http": "0.0.1-security",
     "mongoose": "^5.11.19",
     "nodemon": "^2.0.7"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3"
+  },
+  "jest": {
+    "testEnvironment":"node"
   }
 }
