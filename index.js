@@ -6,7 +6,6 @@ const mongoose = require('mongoose')
 const logger = require('./utils/logger')
 const config = require('./utils/config')
 app.use(express.static('build'))
-const Blog = require('./models/blog')
 const blogsRouter = require('./controllers/blogs')
 app.use('/api/blogs', blogsRouter)
 
