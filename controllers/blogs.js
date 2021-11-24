@@ -24,7 +24,7 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
   
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', async (request, response) => {
   const blog = new Blog(request.body)
   blog.likes = blog.likes || 0
 
@@ -37,11 +37,28 @@ blogsRouter.post('/', async (request, response, next) => {
       console.log(blog)
   })
 
+blogsRouter.put('/:id', async (request, response) => {
+  const body = request.body
+
+  const blog = {
+    author: body.author,
+    title: body.title,
+    url: body.url,
+    likes: body.likes
+  }
+
+  try {
+    const newBlog = await Blog.findByIdAndUpdate(request.params.id, blog)
+    newBlog.likes++
+    response.json(newBlog.toJSON())
+  } catch (exception) {
+    return response.status(400).send(exception)
+  }
+})
+
 blogsRouter.delete('/:id', async (request, response) => {
   try {
     await Blog.findByIdAndRemove(request.params.id)
-    const blog = await Blog.findById(request.params.id)
-    console.log(request.params.id + " aötrae")
     response.status(204).end()
   } catch (exception) {
     console.log(exception)

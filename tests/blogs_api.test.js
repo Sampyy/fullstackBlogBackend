@@ -101,8 +101,6 @@ test('a blog can be deleted', async () => {
     blogsBeforeDelete = content.body
     const blogToDelete = blogsBeforeDelete[0]
 
-    console.log('täällä ' + blogToDelete)
-
     await api
     .delete(`/api/blogs/${blogToDelete.id}`)
     .expect(204)
@@ -111,6 +109,8 @@ test('a blog can be deleted', async () => {
 
     expect(blogsAfterDelete.body).toHaveLength(initialBlogs.length - 1)
 })
+
+
 
 
 afterAll(() => {
