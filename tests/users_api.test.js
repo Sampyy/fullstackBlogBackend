@@ -63,6 +63,56 @@ describe('when there is initially one user at db', () => {
 
         
     })
+
+    test ('creation fails for too short username', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'ro',
+            name: 'user that is not new',
+            password: 'secretpw'
+        }
+
+        const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+        console.log('console log: ++ ' + result.body.error)
+
+        expect(result.body.error).toContain('`username` (`' + newUser.username + '`) is shorter than the minimum allowed length')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+        
+    })
+
+    test ('creation fails for too short password', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'rorerasa',
+            name: 'user that is not new',
+            password: 'se'
+        }
+
+        const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+        console.log('console log: ++ ' + result.body.error)
+
+        expect(result.body.error).toContain('Password is shorter than 3 characters')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+        
+    })
 })
 
 
