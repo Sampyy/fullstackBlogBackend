@@ -4,6 +4,14 @@ const { findById } = require('../models/blog.js')
 const Blog = require('../models/blog.js')
 const User = require('../models/user')
 
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    return authorization.substring(7)
+  }
+  return null
+}
+
 
 blogsRouter.get('/', async (request, response) => {
 
