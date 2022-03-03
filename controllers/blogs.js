@@ -4,14 +4,9 @@ const { findById } = require('../models/blog.js')
 const Blog = require('../models/blog.js')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const { userExtractor } = require('../utils/middleware.js')
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
+
 
 
 blogsRouter.get('/', async (request, response) => {
@@ -35,15 +30,7 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
   
-blogsRouter.post('/', async (request, response) => {
- 
-  console.log("in post")
-  console.log(request.token)
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!request.token || !decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' })
-  } 
-  const user = await User.findById(decodedToken.id)
+blogsRouter.post('/',userExtractor, async (request, response) => {
 
   const body = request.body
   const blog = new Blog({
@@ -51,15 +38,13 @@ blogsRouter.post('/', async (request, response) => {
     title: body.title,
     url: body.url,
     likes: body.likes || 0,
-    user: user._id
+    user: request.user._id
   })
 
 
     const savedBlog = await blog.save()
-    console.log("here "  + user)
-    const newBlogs = user.blogs.concat(savedBlog._id)
-    console.log("again "  + user)
-    await User.findByIdAndUpdate(decodedToken.id, { blogs: newBlogs})
+    const newBlogs = request.user.blogs.concat(savedBlog._id)
+    await User.findByIdAndUpdate(request.user._id, { blogs: newBlogs})
 
     response.json(savedBlog.toJSON())
  
@@ -87,17 +72,12 @@ blogsRouter.put('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!request.token || !decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' })
-  } 
-  const user = await User.findById(decodedToken.id)
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 
 
   try {
     await Blog.findByIdAndRemove(request.params.id)
-    const newBlogs = user.blogs
+    const newBlogs = request.user.blogs
     for (var i = 0; i < newBlogs.length ; i++) {
       if (newBlogs[i].toString() === request.params.id) {
         
@@ -105,7 +85,7 @@ blogsRouter.delete('/:id', async (request, response) => {
         break
       }
     }
-    await User.findByIdAndUpdate(decodedToken.id, { blogs: newBlogs})
+    await User.findByIdAndUpdate(request.user._id, { blogs: newBlogs})
     response.status(204).end()
   } catch (exception) {
     console.log(exception)
